@@ -1,0 +1,647 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>속담 · 관용어 워크시트 게임 (모바일)</title>
+  <style>
+    :root{
+      --bg:#0b1020;
+      --card:#121a33;
+      --card2:#0f1630;
+      --text:#e9eeff;
+      --muted:rgba(233,238,255,.78);
+      --line:rgba(255,255,255,.14);
+      --ok:#2ecc71;
+      --bad:#ff5c7a;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      background:
+        radial-gradient(1100px 650px at 20% 0%, rgba(119,141,255,.22), transparent 60%),
+        radial-gradient(900px 600px at 100% 30%, rgba(255,92,122,.16), transparent 55%),
+        var(--bg);
+      color:var(--text);
+      font-family: system-ui,-apple-system,Segoe UI,Roboto,Apple SD Gothic Neo,Noto Sans KR,sans-serif;
+      -webkit-font-smoothing:antialiased;
+      text-rendering:optimizeLegibility;
+    }
+    .wrap{
+      max-width:560px;
+      margin:0 auto;
+      padding:16px 14px calc(18px + env(safe-area-inset-bottom));
+    }
+    header{
+      position:sticky;
+      top:0;
+      z-index:10;
+      padding:14px 0 10px;
+      backdrop-filter: blur(10px);
+      background: linear-gradient(180deg, rgba(11,16,32,.92), rgba(11,16,32,.68));
+      border-bottom:1px solid rgba(255,255,255,.08);
+    }
+    h1{
+      margin:0 0 8px;
+      font-size:17px;
+      letter-spacing:-.3px;
+      line-height:1.25;
+    }
+    .sub{
+      margin:0 0 10px;
+      color:var(--muted);
+      font-size:12.5px;
+      line-height:1.3;
+    }
+    .row{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:space-between;
+    }
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 10px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.06);
+      font-size:12.5px;
+      color:rgba(233,238,255,.9);
+    }
+    select, button{
+      font:inherit;
+      color:var(--text);
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.07);
+      border-radius:14px;
+      padding:12px 12px;
+      cursor:pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+    select{ padding:10px 12px; border-radius:12px; }
+    button:active{ transform: translateY(1px); }
+    .btn-primary{
+      background: linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,.06));
+      border-color: rgba(255,255,255,.18);
+    }
+
+    .card{
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(18,26,51,.55);
+      border-radius:18px;
+      box-shadow: 0 18px 40px rgba(0,0,0,.35);
+    }
+
+    .stats{
+      margin-top:10px;
+      display:grid;
+      grid-template-columns:1fr 1fr 1fr;
+      gap:8px;
+    }
+    .stat{
+      padding:10px 10px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.05);
+      font-size:12.5px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+    }
+    .stat b{ font-size:13px; }
+
+    .qbox{
+      margin-top:12px;
+      padding:16px 14px;
+    }
+    .qtitle{
+      font-size:12.5px;
+      color:var(--muted);
+      margin-bottom:8px;
+    }
+    .qtext{
+      font-size:18px;
+      line-height:1.62;
+      letter-spacing:-.2px;
+      white-space:pre-wrap;
+      word-break:keep-all;
+    }
+
+    .toast{
+      margin-top:10px;
+      padding:12px 12px;
+      border-radius:16px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.20);
+      color: rgba(233,238,255,.92);
+      font-size:13px;
+      line-height:1.35;
+    }
+    .toast.ok{ border-color: rgba(46,204,113,.55); }
+    .toast.bad{ border-color: rgba(255,92,122,.55); }
+
+    /* 선택지: 하단 고정 */
+    .choices{
+      position:sticky;
+      bottom:0;
+      z-index:9;
+      margin-top:12px;
+      padding:12px 0 calc(8px + env(safe-area-inset-bottom));
+      background: linear-gradient(180deg, rgba(11,16,32,0), rgba(11,16,32,.92) 25%, rgba(11,16,32,.98));
+    }
+    .choice-grid{
+      display:grid;
+      gap:10px;
+    }
+    .opt{
+      width:100%;
+      text-align:left;
+      padding:16px 14px;
+      font-size:16.5px;
+      line-height:1.2;
+      border-radius:18px;
+      background: rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.14);
+    }
+    .opt.ok{
+      border-color: rgba(46,204,113,.75);
+      background: rgba(46,204,113,.10);
+    }
+    .opt.bad{
+      border-color: rgba(255,92,122,.75);
+      background: rgba(255,92,122,.10);
+    }
+
+    .actions{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:10px;
+      margin-top:10px;
+    }
+    .actions button{
+      padding:14px 12px;
+      font-size:15.5px;
+      border-radius:16px;
+    }
+
+    .hint{
+      margin-top:8px;
+      color: rgba(233,238,255,.65);
+      font-size:12px;
+      line-height:1.35;
+    }
+
+    /* 아주 작은 화면 */
+    @media (max-width:360px){
+      .qtext{ font-size:17px; }
+      .opt{ font-size:15.5px; padding:15px 12px; }
+      .actions button{ font-size:15px; }
+      .stats{ grid-template-columns:1fr 1fr; }
+      .stat:nth-child(3){ grid-column:1 / -1; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>속담 · 관용어 워크시트 게임</h1>
+      <p class="sub">모바일 세로 화면 전용 · 보기 선택형 / 플래시카드</p>
+
+      <div class="row">
+        <span class="pill">모드
+          <select id="mode" aria-label="모드 선택">
+            <option value="proverb">연습 1 — 속담 뜻 맞히기</option>
+            <option value="idiom">연습 2 — 관용 표현 채우기</option>
+            <option value="flash">플래시카드</option>
+          </select>
+        </span>
+
+        <span class="pill">문항
+          <select id="count" aria-label="문항 수">
+            <option>5</option>
+            <option selected>10</option>
+            <option>12</option>
+            <option>15</option>
+            <option>20</option>
+          </select>
+        </span>
+
+        <button class="btn-primary" id="start">시작 / 다시 시작</button>
+      </div>
+
+      <div class="stats">
+        <div class="stat"><span>진행</span><b id="progress">0/0</b></div>
+        <div class="stat"><span>점수</span><b id="score">0</b></div>
+        <div class="stat"><span>정답률</span><b id="acc">0%</b></div>
+      </div>
+    </header>
+
+    <main>
+      <section class="card qbox" aria-live="polite">
+        <div class="qtitle" id="qtitle">문항</div>
+        <div class="qtext" id="qtext">상단에서 모드를 고르고 “시작 / 다시 시작”을 눌러 주세요.</div>
+      </section>
+
+      <div class="toast" id="toast">안내: 보기 버튼을 눌러 정답을 선택하세요.</div>
+
+      <section class="choices" aria-label="선택지 영역">
+        <div class="choice-grid" id="opts"></div>
+
+        <div class="actions">
+          <button id="reveal">정답 보기</button>
+          <button class="btn-primary" id="next">다음</button>
+        </div>
+
+        <div class="hint">
+          팁: 휴대폰에서는 선택지가 아래에 고정됩니다. (엄지로 누르기 편한 UI)
+        </div>
+      </section>
+    </main>
+  </div>
+
+<script>
+/* =========================
+   데이터 (워크시트 기반)
+   ========================= */
+
+/* 연습 1 보기(속담) */
+const PROVERBS = [
+  "호랑이도 제 말 하면 온다",
+  "소 잃고 외양간 고친다",
+  "세 살 버릇 여든까지 간다",
+  "원숭이도 나무에서 떨어질 때가 있다",
+  "천 리 길도 한 걸음부터",
+  "개구리 올챙이 적 생각 못 한다",
+  "고래 싸움에 새우 등 터진다",
+  "믿는 도끼에 발등 찍힌다",
+  "젊어서 고생은 사서도 한다",
+  "시작이 반이다"
+];
+
+/* 연습 1 문항(정의 → 정답 속담) */
+const PROVERB_QUESTIONS = [
+  {
+    prompt: "상황이 옛날보다 나아진 사람이 자신이 어렵던 때를 생각하지 않고\n처음부터 잘했던 것처럼 행동하는 것을 표현하는 말.",
+    answer: "개구리 올챙이 적 생각 못 한다"
+  },
+  {
+    prompt: "강한 자들끼리 싸우는 바람에 아무 관계도 없는 약한 자가\n중간에 끼어 피해를 입게 된다는 것을 표현하는 말.",
+    answer: "고래 싸움에 새우 등 터진다"
+  },
+  {
+    prompt: "일이 이미 잘못된 뒤에는 힘을 써도 소용이 없다는 것을 표현하는 말.",
+    answer: "소 잃고 외양간 고친다"
+  },
+  {
+    prompt: "아무리 익숙하고 잘하는 사람이라도 가끔 실수할 때가 있다는 것을 표현하는 말.",
+    answer: "원숭이도 나무에서 떨어질 때가 있다"
+  },
+  {
+    prompt: "젊었을 때 고생하는 것은 미래의 발전을 위하여 좋은 경험이 되기 때문에\n너무 힘들게 생각하지 말라는 것을 표현하는 말.",
+    answer: "젊어서 고생은 사서도 한다"
+  },
+  {
+    prompt: "다른 사람에 대한 이야기를 하는데 바로 그 사람이 나타나는 경우를 표현하는 말.",
+    answer: "호랑이도 제 말 하면 온다"
+  }
+];
+
+/* 연습 2 보기(관용 표현) */
+const IDIOMS = [
+  "입이 가볍다",
+  "눈이 높다",
+  "입이 무겁다",
+  "귀가 얇다",
+  "입이 짧다",
+  "발이 넓다"
+];
+
+/* 연습 2 문항(대화 → 정답 관용 표현) */
+const IDIOM_QUESTIONS = [
+  {
+    prompt:
+`(대화 1)
+A: 이 식당 음식이 진짜 맛있대. 여기서 먹자.
+B: 그래? 내 친구는 가격에 비해서 별로라고 하던데.
+A: 그래? 그럼 다른 식당으로 가자.
+B: 그런데 어제 신문에는 이 식당이 최고라고 했거든.
+A: 그렇지? 여기가 맛있을 거야.
+
+여자는: ________`,
+    answer: "귀가 얇다"
+  },
+  {
+    prompt:
+`(대화 2)
+A: 카메라를 살까 하는데 어떤 게 좋을지 모르겠네.
+B: 그래? 그럼 내 친구한테 물어봐 줄게. 사진을 전공으로 공부하는 친구가 있어.
+A: 카메라 사면 기념으로 같이 여행 가자. 어때?
+B: 좋은 생각이야. 여행사에 근무하는 친구가 있는데 어디가 좋은지 물어볼게.
+
+여자는: ________`,
+    answer: "발이 넓다"
+  },
+  {
+    prompt:
+`(대화 3)
+A: 진우와 세경이가 헤어졌다던데 왜 헤어졌는지 알지?
+B: 아니.
+A: 너 세경이하고 제일 친하잖아. 왜 그랬대?
+B: 몰라. 바빠서 먼저 갈게.
+
+여자는: ________`,
+    answer: "입이 무겁다"
+  },
+  {
+    prompt:
+`(대화 4)
+A: 고기 좀 더 먹지 그래?
+B: 오늘은 고기가 별로 먹고 싶지 않네.
+A: 밥은 왜 이렇게 조금 먹어?
+B: 배가 불러서 그만 먹고 싶어.
+
+여자는: ________`,
+    answer: "입이 짧다"
+  },
+  {
+    prompt:
+`(대화 5)
+A: 어떻게 그럴 수가 있어? 진우는 나를 짜증나게 한다고 말한 걸 네가 진우한테 다 말했다면서?
+B: 어, 그게… 미안.
+A: 나는 너를 믿고 한 말이었는데.
+B: 미안해. 그런데 이건 비밀인데 진우도 눈치 없는 네 성격이 맘에 안 든다고 했어.
+
+여자는: ________`,
+    answer: "입이 가볍다"
+  },
+  {
+    prompt:
+`(대화 6)
+A: 이번에 내가 소개해 준 사람 어때? 괜찮지?
+B: 별로였어. 키가 너무 크고 말이 많아서 피곤했어.
+A: 무슨 소리야. 지난번에 소개해 준 사람은 키가 작고 말이 별로 없다고 싫다고 했잖아.
+B: 어쨌든 이번에 만난 사람도 마음에 안 드네. 좀 더 멋있고 똑똑한 사람 없을까?
+
+여자는: ________`,
+    answer: "눈이 높다"
+  }
+];
+
+/* =========================
+   유틸
+   ========================= */
+const $ = (sel) => document.querySelector(sel);
+
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+function pickN(arr,n){
+  return shuffle(arr).slice(0, Math.min(n, arr.length));
+}
+function pct(n,d){ return d===0 ? 0 : Math.round((n/d)*100); }
+
+/* =========================
+   상태
+   ========================= */
+let deck = [];
+let idx = 0;
+let score = 0;
+let correct = 0;
+let answered = 0;
+let locked = false;
+let currentCorrect = "";
+let currentChoices = [];
+let flashFlipped = false;
+
+/* =========================
+   UI helpers
+   ========================= */
+function setToast(text, kind=""){
+  const t = $("#toast");
+  t.innerHTML = text;
+  t.classList.remove("ok","bad");
+  if(kind) t.classList.add(kind);
+}
+function updateStats(){
+  $("#progress").textContent = deck.length ? `${Math.min(idx+1, deck.length)}/${deck.length}` : "0/0";
+  $("#score").textContent = ($("#mode").value==="flash") ? "-" : String(score);
+  $("#acc").textContent = ($("#mode").value==="flash") ? "-" : `${pct(correct, answered)}%`;
+}
+function clearChoices(){
+  $("#opts").innerHTML = "";
+}
+
+/* =========================
+   렌더
+   ========================= */
+function render(){
+  const mode = $("#mode").value;
+
+  if(deck.length === 0){
+    $("#qtitle").textContent = "문항";
+    $("#qtext").textContent = "상단에서 모드를 고르고 “시작 / 다시 시작”을 눌러 주세요.";
+    clearChoices();
+    setToast("안내: 시작 버튼을 눌러 게임을 시작하세요.");
+    updateStats();
+    return;
+  }
+
+  if(idx >= deck.length){
+    $("#qtitle").textContent = "결과";
+    if(mode === "flash"){
+      $("#qtext").textContent = "끝! “시작 / 다시 시작”으로 다시 섞을 수 있어요.";
+      clearChoices();
+      setToast("완료!", "ok");
+    }else{
+      $("#qtext").textContent =
+`끝!
+
+- 점수: ${score}
+- 정답: ${correct} / ${answered} (${pct(correct, answered)}%)
+
+“시작 / 다시 시작”으로 다시 풀 수 있어요.`;
+      clearChoices();
+      setToast("완료! 다시 하려면 시작을 누르세요.", "ok");
+    }
+    updateStats();
+    return;
+  }
+
+  const q = deck[idx];
+  $("#qtitle").textContent = q.title;
+  $("#qtext").textContent = q.prompt;
+
+  clearChoices();
+  locked = false;
+  flashFlipped = false;
+
+  currentCorrect = q.answer;
+  currentChoices = q.choices;
+
+  currentChoices.forEach((c, i) => {
+    const b = document.createElement("button");
+    b.className = "opt";
+    b.textContent = `${i+1}. ${c}`;
+    b.addEventListener("click", () => onChoose(i));
+    $("#opts").appendChild(b);
+  });
+
+  if(mode === "flash"){
+    setToast("플래시카드: 1번(뒤집기) → 2번(다음) 순서로 사용하세요.");
+  }else{
+    setToast("보기 버튼을 눌러 정답을 선택하세요.");
+  }
+
+  updateStats();
+}
+
+function onChoose(i){
+  const mode = $("#mode").value;
+
+  // flash mode
+  if(mode === "flash"){
+    if(i === 0){
+      if(flashFlipped) return;
+      flashFlipped = true;
+      $("#qtext").textContent = currentCorrect + "\n\n(이제 2번 '다음으로'를 눌러 주세요)";
+      const btns = Array.from(document.querySelectorAll(".opt"));
+      btns[0].classList.add("ok");
+      setToast("카드를 뒤집었습니다.", "ok");
+      return;
+    }
+    if(i === 1){
+      next();
+      return;
+    }
+    return;
+  }
+
+  // quiz modes
+  if(locked) return;
+  locked = true;
+  answered++;
+
+  const picked = currentChoices[i];
+  const btns = Array.from(document.querySelectorAll(".opt"));
+
+  // 표시: 정답은 항상 초록
+  btns.forEach((b, k) => {
+    if(currentChoices[k] === currentCorrect) b.classList.add("ok");
+  });
+
+  if(picked === currentCorrect){
+    correct++;
+    score += 10;
+    btns[i].classList.add("ok");
+    setToast(`정답! <b>${currentCorrect}</b>`, "ok");
+  }else{
+    score -= 3;
+    btns[i].classList.add("bad");
+    setToast(`틀렸어요. 정답은 <b>${currentCorrect}</b>`, "bad");
+  }
+
+  updateStats();
+}
+
+/* =========================
+   덱 생성
+   ========================= */
+function buildDeck(){
+  const mode = $("#mode").value;
+  const cnt = parseInt($("#count").value,10);
+
+  idx = 0;
+  score = 0;
+  correct = 0;
+  answered = 0;
+
+  if(mode === "proverb"){
+    const qs = pickN(PROVERB_QUESTIONS, cnt);
+    deck = qs.map((q, n) => {
+      const wrongPool = PROVERBS.filter(x => x !== q.answer);
+      const choices = shuffle([q.answer, ...pickN(wrongPool, 3)]);
+      return { title:`연습 1 · 속담 뜻 맞히기 (${n+1})`, prompt:q.prompt, answer:q.answer, choices };
+    });
+  }else if(mode === "idiom"){
+    const qs = pickN(IDIOM_QUESTIONS, cnt);
+    deck = qs.map((q, n) => {
+      const wrongPool = IDIOMS.filter(x => x !== q.answer);
+      const choices = shuffle([q.answer, ...pickN(wrongPool, 3)]);
+      return { title:`연습 2 · 관용 표현 채우기 (${n+1})`, prompt:q.prompt, answer:q.answer, choices };
+    });
+  }else{
+    // flash: 속담(앞=표현, 뒤=정의) + 관용(앞=표현, 뒤=대화)
+    const cards = [];
+    PROVERB_QUESTIONS.forEach(q => cards.push({ front:q.answer, back:q.prompt }));
+    IDIOM_QUESTIONS.forEach(q => cards.push({ front:q.answer, back:q.prompt.replace(/\n여자는: ________$/,"").trim() }));
+
+    const chosen = pickN(cards, cnt);
+    deck = chosen.map((c, n) => ({
+      title:`플래시카드 (${n+1})`,
+      prompt: c.front + "\n\n(1번: 뒤집기 / 2번: 다음으로)",
+      answer: c.back,
+      choices: ["뒤집기", "다음으로"]
+    }));
+  }
+}
+
+/* =========================
+   액션
+   ========================= */
+function next(){
+  idx++;
+  render();
+}
+function reveal(){
+  const mode = $("#mode").value;
+  if(mode === "flash"){
+    setToast("플래시카드는 1번 ‘뒤집기’를 사용하세요.");
+    return;
+  }
+  if(deck.length === 0 || idx >= deck.length) return;
+
+  setToast(`정답: <b>${currentCorrect}</b>`);
+  const btns = Array.from(document.querySelectorAll(".opt"));
+  btns.forEach((b, k) => {
+    if(currentChoices[k] === currentCorrect) b.classList.add("ok");
+  });
+}
+
+/* =========================
+   이벤트
+   ========================= */
+$("#start").addEventListener("click", () => {
+  buildDeck();
+  render();
+});
+$("#next").addEventListener("click", () => {
+  if(deck.length===0) return;
+  next();
+});
+$("#reveal").addEventListener("click", reveal);
+
+/* 키보드(PC에서도 테스트 가능) */
+document.addEventListener("keydown", (e) => {
+  const key = e.key.toLowerCase();
+  if(key === "n") next();
+  if(["1","2","3","4"].includes(e.key)){
+    const i = parseInt(e.key,10)-1;
+    const btns = document.querySelectorAll(".opt");
+    if(btns[i]) btns[i].click();
+  }
+});
+
+/* 초기 */
+render();
+</script>
+</body>
+</html>
