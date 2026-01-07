@@ -462,13 +462,40 @@ function render(){
       clearChoices();
       setToast("완료!", "ok");
     }else{
-      $("#qtext").textContent =
+      // 결과 화면(퀴즈 모드)
+      const perfectProverb = (mode === "proverb" && deck.length === 6 && correct === 6 && answered === 6);
+      if(perfectProverb){
+        $("#qtext").innerHTML =
+`🎉 <b>축하합니다!</b> 연습 1 (속담 뜻 맞히기) <b>6문제</b>를 모두 맞혔어요!<br><br>
+이제 <b>모드</b>가 더 있다는 걸 기억하세요 👇<br>
+<b>연습 2 — 관용 표현 채우기</b>에 도전해 볼까요?<br><br>
+<button id="go2" class="btn-primary" style="width:100%; padding:14px 12px; border-radius:16px; font-size:15.5px;">
+연습 2로 도전하기 →
+</button>
+<div style="margin-top:10px; color: rgba(233,238,255,.7); font-size:12.5px; line-height:1.35;">
+(또는 위의 <b>모드</b>에서 <b>연습 2</b>를 직접 선택해도 됩니다)
+</div>`;
+        setToast("완벽해요! 이제 연습 2로 넘어가 볼까요?", "ok");
+        // 버튼 이벤트(렌더 직후 붙이기)
+        setTimeout(() => {
+          const btn = document.getElementById("go2");
+          if(btn){
+            btn.addEventListener("click", () => {
+              $("#mode").value = "idiom";
+              buildDeck();
+              render();
+            });
+          }
+        }, 0);
+      }else{
+        $("#qtext").textContent =
 `끝!
 
 - 점수: ${score}
 - 정답: ${correct} / ${answered} (${pct(correct, answered)}%)
 
 “시작 / 다시 시작”으로 다시 풀 수 있어요.`;
+      }
       clearChoices();
       setToast("완료! 다시 하려면 시작을 누르세요.", "ok");
     }
